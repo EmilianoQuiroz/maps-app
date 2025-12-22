@@ -14,7 +14,7 @@ Aplicación móvil desarrollada con React Native Expo y Zustand para gestión de
 - [Arquitectura de Commits](#-arquitectura-de-commits)
 - [Features](#-features)
   - [feature/project-initial-configuration](#featureproject-initial-configuration)
-
+  - [feature/geolocation-and-permissions](#featuregeolocation-and-permissions)
 ---
 
 ## 📝 Descripción del Proyecto
@@ -261,6 +261,101 @@ Root (/)
 - Soporte para temas claro/oscuro
 - StatusBar adaptable automáticamente
 
+---
+## feature/geolocation-and-permissions
+
+**Descripción**: Integración con el API de Expo Location para acceder a servicios de geolocalización del dispositivo.
+
+**Funcionalidades**:
+- Acceso a la ubicación actual del dispositivo
+- Suscripción a cambios de ubicación en tiempo real
+- Configuración de precisión y frecuencia de actualización
+- Gestión de permisos de ubicación (foreground/background)
+- Verificación de estado de permisos
+
+**Implementación**:
+
+**Solicitar permisos de ubicación**:
+```typescript
+import { PermissionsStatus } from "@/infrastructure/interfaces/location";
+import * as Location from "expo-location";
+
+export const requestLocationPermission =
+  async (): Promise<PermissionsStatus> => {
+    // Solicitar permiso de ubicación al usuario
+    const { status } = await Location.requestForegroundPermissionsAsync();
+
+    if (status !== "granted") {
+      manualPermissionRequest();
+      return PermissionsStatus.DENIED;
+    }
+
+    return PermissionsStatus.GRANTED;
+  };
+```
+
+**Verificar estado de permisos**:
+```typescript
+export const checkLocationPermission = async () => {
+  // Verificar el estado del permiso de ubicación
+  const { status } = await Location.getForegroundPermissionsAsync();
+
+  switch (status) {
+    case "granted":
+      return PermissionsStatus.GRANTED;
+    case "denied":
+      return PermissionsStatus.DENIED;
+    default:
+      return PermissionsStatus.UNDETERMINED;
+  }
+};
+```
+
+**Estados de permisos**:
+```typescript
+export enum PermissionsStatus {
+  CHECKING = "checking",      // Verificando permisos
+  GRANTED = "granted",         // Permisos concedidos
+  DENIED = "denied",           // Permisos denegados
+  BLOCKED = "blocked",         // Permisos bloqueados permanentemente
+  LIMITED = "limited",         // Permisos limitados (iOS)
+  UNAVAILABLE = "unavailable", // Servicio no disponible
+  UNDETERMINED = "undetermined" // Estado no determinado
+}
+```
+
+**Archivos relacionados**:
+- [core/actions/permission/location.ts](actions/permission/location.ts) - Acciones de permisos de ubicación
+- [infrastructure/interfaces/location.ts](../infrastructure/interfaces/location.ts) - Interfaces y enums de ubicación
+
+---
+
+## Permisos
+
+**Descripción**: Sistema de gestión de permisos de ubicación para iOS y Android, incluyendo manejo de estados y redirección a configuración del sistema.
+
+**Funcionalidades**:
+- Solicitud de permisos de ubicación foreground
+- Verificación del estado actual de permisos
+- Manejo de diferentes estados: granted, denied, undetermined, blocked
+- Redirección a ajustes del sistema para permisos denegados permanentemente
+
+**Implementación**:
+
+**Redirección a ajustes del sistema**:
+```typescript
+export const manualPermissionRequest = async () => {
+  // Lanzar los ajustes de la aplicación para que el usuario 
+  // pueda cambiar los permisos manualmente
+  // TODO: Implementar apertura de ajustes según plataforma
+};
+```
+
+**Archivos relacionados**:
+- [core/actions/permission/location.ts](actions/permission/location.ts) - Gestión de permisos
+- [infrastructure/interfaces/location.ts](../infrastructure/interfaces/location.ts) - Estados de permisos
+
+---
 
 
 ## 🤝 Contribución
