@@ -13,7 +13,7 @@ Aplicación móvil desarrollada con React Native Expo y Zustand para gestión de
   - [Stack Tecnológico](#stack-tecnológico)
 - [Arquitectura de Commits](#-arquitectura-de-commits)
 - [Features](#-features)
-  - [feature/project-initial-configuration](#-feature/project-initial-configuration)
+  - [feature/project-initial-configuration](#featureproject-initial-configuration)
 
 ---
 
