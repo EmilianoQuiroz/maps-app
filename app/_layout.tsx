@@ -8,6 +8,7 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/presentation/hooks/use-color-scheme";
+import PermissionsCheckerProvider from "@/presentation/providers/PermissionsCheckerProvider";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -18,15 +19,16 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="loading/index" options={{ animation: "none" }} />
-        <Stack.Screen name="map/index" options={{ animation: "fade" }} />
-        <Stack.Screen
-          name="permissions/index"
-          options={{ animation: "fade" }}
-        />
-      </Stack>
-      <StatusBar style="auto" />
+      <PermissionsCheckerProvider>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="loading/index" options={{ animation: "none" }} />
+          <Stack.Screen name="map/index" options={{ animation: "fade" }} />
+          <Stack.Screen
+            name="permissions/index"
+            options={{ animation: "fade" }}
+          />
+        </Stack>
+      </PermissionsCheckerProvider>
     </ThemeProvider>
   );
 }
